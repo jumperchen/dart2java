@@ -1,0 +1,30 @@
+name: dart2java
+description: Dart to Java transpiler
+version: 0.0.1
+#author: jumperchen <jumperchen@potix.com>
+dependencies:
+  package_config: '>=0.1.1 <2.0.0'
+  pub_semver: ^1.2.1
+  compiler:
+    path: ../sdk/pkg/compiler
+  args: any
+  js:
+    path: ../sdk/pkg/js
+  js_ast:
+    path: ../sdk/pkg/js_ast
+  js_runtime:
+    path: ../sdk/sdk/lib/_internal/js_runtime
+  kernel:
+    path: ../sdk/pkg/kernel
+  sdk_library_metadata:
+    path: ../sdk/sdk/lib/_internal/sdk_library_metadata
+  dart2js_info:
+    path: ../sdk/third_party/dart2js_info
+  lookup_map:
+    path: ../sdk/pkg/lookup_map
+  front_end:
+    path: ../sdk/pkg/front_end
+dependency_overrides:
+  front_end:
+    path: ../sdk/pkg/front_end
+  analyzer: any
