@@ -38,7 +38,7 @@ class JavaMethodVisitor extends CodeGenVisitor {
 
     // type info is put before return type in java
     if (node.typeVariables != null) {
-      buffer.write('${node.typeVariables} ');
+      buffer.write(toTypeAnnotations(node.typeVariables.iterator)).write(' ');
     }
     if (node.returnType != null) {
       TypeAnnotation returnType = node.returnType;

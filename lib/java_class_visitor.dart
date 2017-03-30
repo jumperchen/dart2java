@@ -26,7 +26,7 @@ class JavaClassVisitor extends CodeGenVisitor {
   visitClassNode(ClassNode node) {
     if (node.name != null) node.name.accept(this);
     if (node.typeParameters != null) {
-      buffer.write('${node.typeParameters} ');
+      buffer.write(toTypeAnnotations(node.typeParameters.iterator)).write(' ');
     }
     if (node.superclass != null) {
       buffer.write('extends ${node.superclass} ');

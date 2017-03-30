@@ -23,6 +23,25 @@ class CodeGenVisitor extends Visitor {
     buffer.comment(node);
 //    throw new UnimplementedError('$node');
   }
+  visitEnum(Enum node) {
+    buffer.tab().writeWithLine('public enum ${node.name} {');
+    Iterator it = node.names.iterator;
+    bool first = true;
+    buffer.indent += 1;
+    while(it.moveNext()) {
+      if (first) {
+        first = false;
+      } else {
+        buffer.writeWithLine(',');
+      }
+      buffer.tab().write('${it.current}');
+    }
+    if (!first) {
+      buffer.writeWithLine(';');
+    }
+    buffer.indent -= 1;
+    buffer.tab().writeWithLine('}');
+  }
   visitLiteralBool(LiteralBool node) => buffer.write('$node');
   visitLiteralDouble(LiteralDouble node) => buffer.write('$node');
   visitLiteralInt(LiteralInt node) => buffer.write('$node');
@@ -85,6 +104,20 @@ class CodeGenVisitor extends Visitor {
 //      buffer.write('${it.current}');
     }
   }
+  String toTypeAnnotations(Iterator<Node> it) {
+    var buffer = new CodeGenBuffer();
+    bool first = true;
+    buffer.write('<');
+    while(it.moveNext()) {
+      if (first) {
+        first = false;
+      } else {
+        buffer.write(', ');
+      }
+      buffer.write(toJavaObjectType(it.current as TypeAnnotation).trim()).write('> ');
+    }
+    return buffer.toString();
+  }
   String toFieldModifiers(VariableDefinitions node) {
     Modifiers modifiers = node.modifiers;
     CodeGenBuffer buffer = _toModifiers(modifiers);
@@ -130,8 +163,41 @@ class CodeGenVisitor extends Visitor {
           return 'boolean ';
         case 'dynamic':
           return 'Object ';
+        case 'num':
+          return 'Number ';
         default:
-          return '$type ';
+          if (type.typeArguments?.isNotEmpty == true) {
+           return '${type.typeName}${toTypeAnnotations(type.typeArguments.iterator)}';
+          } else {
+            return '$type ';
+          }
+      }
+    } else if (type is FunctionTypeAnnotation) {
+      return 'Function ';
+    } else {
+      return 'Object ';
+    }
+  }
+
+  String toJavaObjectType(TypeAnnotation type) {
+    if (type is NominalTypeAnnotation) {
+      switch ('$type') {
+        case 'bool':
+          return 'Boolean ';
+        case 'dynamic':
+          return 'Object ';
+        case 'num':
+          return 'Number ';
+        case 'int':
+          return 'Integer ';
+        case 'double':
+          return 'Double ';
+        default:
+          if (type.typeArguments?.isNotEmpty == true) {
+            return '${type.typeName}${toTypeAnnotations(type.typeArguments.iterator)} ';
+          } else {
+            return '$type ';
+          }
       }
     } else if (type is FunctionTypeAnnotation) {
       return 'Function ';
